@@ -2,29 +2,6 @@
 * Author: LIMA, Gonçalo (goncalo.lima@novasbe.pt)
 
 **************
-* DIRECTORIES
-**************
-* OUTPUT DIRECTORIES
-cd "D:\users\goncalo.lima" // Replace appropriately
-cap mkdir misi_cleaning // Creating project's folder
-cd "D:\users\goncalo.lima\misi_cleaning" // Setting the working directory
-cap mkdir datasets // Creating folder to save datasets
-global wd "D:\users\goncalo.lima\misi_cleaning" // Setting main work directory global
-global data "$wd\datasets" // Setting datasets directory global
-
-* INPUT DIRECTORIES
-global misi "D:\data-anon\18.01\misi-pub"
-global eneb "D:\data-anon\18.01\eneb"
-global enes "D:\data-anon\18.01\enes"
-global priv "D:\data-anon\18.01\misi-priv"
-global inqpriv "D:\data-anon\18.01\inq-priv"
-global personnel "D:\data-anon\18.01\misi-pub-pessoal"
-global feeder "$wd/feeder_data"
-
-global personnel_labels "D:\data-anon\18.01\misi-pub-pessoal\doc"
-global labels "D:\data-anon\18.01\misi-pub\doc"
-
-**************
 * PACKAGES
 **************
 ssc install workdays
@@ -151,7 +128,7 @@ replace pay_change = -148.02 if year == 2015 & index == 299
 replace pay_change = -195.75 if year == 2015 & index == 340
 replace pay_change = -230.33 if year == 2015 & index == 370
 
-** Salary cuts quarterly reversion (2016) 
+** Salary cuts quarterly reversion (2016)
 replace pay_change = -18.63 + 18.63*(0*0.5 + 0.8*0.25 + 1*0.25) ///
 	if year == 2016 & index == 167
 replace pay_change = -47.86 + 47.86*(0.4*0.25 + 0.6*0.25 + 0.8*0.25 + 1*0.25) ///
@@ -174,7 +151,7 @@ replace pay_change = -195.75 + 195.75*(0.4*0.25 + 0.6*0.25 + 0.8*0.25 + 1*0.25) 
 	if year == 2016 & index == 340
 replace pay_change = -230.33 + 230.33*(0.4*0.25 + 0.6*0.25 + 0.8*0.25 + 1*0.25) ///
 	if year == 2016 & index == 370
-	
+
 label var pay_change "Temporary pay change"
 
 * Number of work days in each year
@@ -190,7 +167,7 @@ drop year_start year_end
 label var days_worked "Number of days worked in the year"
 
 * Expected annual and monthly pay
-gen exp_paya = (index_pay + pay_change)*months_pay + meal_sub*days_worked 
+gen exp_paya = (index_pay + pay_change)*months_pay + meal_sub*days_worked
 gen exp_paym = exp_paya/12
 label var exp_paya "Expected annual gross salary"
 label var exp_paym "Expected monthly gross salary"
@@ -507,20 +484,20 @@ replace irs_lb = 0.10 if (year == 2008 | year == 2009) & index == 218
 replace irs_ub = 0.17 if (year == 2008 | year == 2009)  & index == 218
 replace irs = 0.17 if (year == 2008 | year == 2009) & index == 218
 
-replace irs_lb = 0.11 if year == 2010 & index == 218 
-replace irs_ub = 0.185 if year == 2010 & index == 218 
+replace irs_lb = 0.11 if year == 2010 & index == 218
+replace irs_ub = 0.185 if year == 2010 & index == 218
 replace irs = 0.185 if year == 2010 & index == 218
 
-replace irs_lb = 0.10 if year == 2011 & index == 218 
-replace irs_ub = 0.175 if year == 2011 & index == 218 
+replace irs_lb = 0.10 if year == 2011 & index == 218
+replace irs_ub = 0.175 if year == 2011 & index == 218
 replace irs = 0.175 if year == 2011 & index == 218
 
-replace irs_lb = 0.085 if year == 2012 & index == 218 
-replace irs_ub = 0.165 if year == 2012 & index == 218 
+replace irs_lb = 0.085 if year == 2012 & index == 218
+replace irs_ub = 0.165 if year == 2012 & index == 218
 replace irs = 0.165 if year == 2012 & index == 218
 
-replace irs_lb = 0.12 if (year == 2013 | year == 2014) & index == 218 
-replace irs_ub = 0.215 if (year == 2013 | year == 2014) & index == 218 
+replace irs_lb = 0.12 if (year == 2013 | year == 2014) & index == 218
+replace irs_ub = 0.215 if (year == 2013 | year == 2014) & index == 218
 replace irs = 0.215 if (year == 2013 | year == 2014) & index == 218
 
 replace irs_lb = 0.106 if (year == 2015 | year == 2016) & index == 218
@@ -610,7 +587,7 @@ replace irs = 0.205 if year == 2006 & index == 245
 
 replace irs_lb = 0.115 if year == 2007  & index == 245
 replace irs_ub = 0.195 if year == 2007  & index == 245
-replace irs = 0.195 if year == 2007 & index == 245 
+replace irs = 0.195 if year == 2007 & index == 245
 
 replace irs_lb = 0.11 if (year == 2008 | year == 2009) & index == 245
 replace irs_ub = 0.19 if (year == 2008 | year == 2009)  & index == 245
@@ -900,35 +877,5 @@ label var real_paym "Monthly real salary (2 workers, 1 child, 2006 euros)"
 label var real_paym_lb "Monthly real salary (lower bound, 2006 euros)"
 label var real_paym_ub "Monthly real salary (upper bound, 2006 euros)"
 
-* Keeping the observations for which there are net salaries
-keep if irs != . 
-
-* Graphs
-cd "D:\shared\joao_goncalo_pedro"
-
-// Expected gross pay given index
-scatter exp_paym year if index >= 167, connect(L) by(index) ///
-	saving(exp_pay, replace)
-	
-// Real salary evolution (2006 euros) by pay index and minimum and maximum tax rates
-preserve
-keep if index >= 167
-twoway scatter real_paym_lb year, connect(L) by(index) || ///
-	scatter real_paym_ub year, connect(L) by(index) ///
-	saving(real_paym, replace)
-restore
-
-* Rounding
-foreach x in exp_paya exp_paym irs_value_lb irs_value_ub irs_value adse_value ///
-	cga_value surcharge_value_lb surcharge_value_ub surcharge_value net_paym_lb ///
-	net_paym_ub net_paym real_paym_lb real_paym_ub real_paym {
-	replace `x' = round(`x', 0.01)
-}
-
-foreach x in retention_rate_lb retention_rate_ub retention_rate {
-	replace `x' = round(`x', 0.001)
-	}
-
 * Saving
 save index_pay, replace
-
